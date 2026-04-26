@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Check</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    iframe {
+      width: 100vw;
+      height: 100vh;
+      border: 0;
+    }
+
+    pre {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 10;
+      margin: 0;
+      padding: 8px 10px;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.75);
+      font-size: 12px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <iframe id="frame" title="Responsive measurement frame"></iframe>
+  <pre id="output">Loading...</pre>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const target = params.get("target") || "/index.html";
+    const frame = document.getElementById("frame");
+    const output = document.getElementById("output");
+
+    frame.src = target;
+
+    frame.addEventListener("load", () => {
+      window.requestAnimationFrame(() => {
+        const frameWindow = frame.contentWindow;
+        const frameDocument = frame.contentDocument;
+        const root = frameDocument.documentElement;
+        const body = frameDocument.body;
+
+        const payload = {
+          target,
+          innerWidth: frameWindow.innerWidth,
+          rootClientWidth: root.clientWidth,
+          rootScrollWidth: root.scrollWidth,
+          bodyClientWidth: body.clientWidth,
+          bodyScrollWidth: body.scrollWidth
+        };
+
+        output.textContent = JSON.stringify(payload);
+        document.title = "Measured";
+      });
+    });
+  </script>
+</body>
+</html>
